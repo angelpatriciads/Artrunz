@@ -73,7 +73,7 @@ struct MapView: UIViewRepresentable {
     
     class MapViewCoordinator: NSObject, MKMapViewDelegate {
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-            let renderer = MKPolygonRenderer(overlay: overlay)
+            let renderer = MKPolylineRenderer(overlay: overlay)
             renderer.strokeColor = .blue
             renderer.lineWidth = 5
             return renderer
