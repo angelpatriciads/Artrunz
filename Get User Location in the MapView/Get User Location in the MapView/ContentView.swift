@@ -10,81 +10,74 @@ import MapKit
 
 struct ContentView: View {
     
-    @StateObject var locationManager = LocationManager()
-    @State private var region = MKCoordinateRegion()
-
+    @StateObject private var viewModel = ContentViewModel()
+    
     var body: some View {
-        Map(coordinateRegion: $region, showsUserLocation: true, annotationItems: [locationManager.lastLocation].compactMap { $0 }) { location in
-            MapMarker(coordinate: location.coordinate)
-        }
-        .onAppear {
-            setInitialRegion()
-        }
-    }
-
-    private func setInitialRegion() {
-        if let coordinate = locationManager.lastLocation?.coordinate {
-            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-            region = MKCoordinateRegion(center: coordinate, span: span)
-        }
+        Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
+            .edgesIgnoringSafeArea(.all)
+            .onAppear {
+                viewModel.checkIfLocationServicesIsEnabled()
+            }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .preferredColorScheme(.dark)
     }
 }
 
-import Foundation
-import CoreLocation
-import Combine
+enum MapDetails {
+    static let startingLocation = CLLocationCoordinate2D(latitude: 37.331516, longitude: -121.891054)
+    static let defaultSpan = MKCoordinateSpan(latitudeDelta: 0.0005, longitudeDelta: 0.0005)
+}
 
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-
-    private let locationManager = CLLocationManager()
+final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+    
+    @Published var region = MKCoordinateRegion(center: MapDetails.startingLocation, span: MapDetails.defaultSpan)
+    var locationManager: CLLocationManager?
     @Published var locationStatus: CLAuthorizationStatus?
     @Published var lastLocation: CLLocation?
-
-    override init() {
-        super.init()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
-    }
-
-   
     
-    var statusString: String {
-        guard let status = locationStatus else {
-            return "unknown"
+    func checkIfLocationServicesIsEnabled() {
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager = CLLocationManager()
+            locationManager!.delegate = self
+            locationManager?.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager?.activityType = CLActivityType.fitness
+            locationManager?.requestWhenInUseAuthorization()
+            locationManager?.startUpdatingLocation()
+        } else {
+            print("alert")
         }
         
-        switch status {
-        case .notDetermined: return "notDetermined"
-        case .authorizedWhenInUse: return "authorizedWhenInUse"
-        case .authorizedAlways: return "authorizedAlways"
-        case .restricted: return "restricted"
-        case .denied: return "denied"
-        default: return "unknown"
+    }
+    
+    private func checkLocationAuthorization() {
+        guard let locationManager = locationManager else { return }
+        
+        switch locationManager.authorizationStatus {
+        case .notDetermined :
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted:
+            print("restricted")
+        case .denied:
+            print("denied")
+        case .authorizedAlways, .authorizedWhenInUse:
+            region = MKCoordinateRegion(center: locationManager.location!.coordinate, span: MapDetails.defaultSpan)
+        @unknown default:
+            break
         }
     }
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        locationStatus = status
-        print(#function, statusString)
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        checkLocationAuthorization()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         lastLocation = location
         print(#function, location)
-    }
-}
-
-extension CLLocation: Identifiable {
-    public var id: CLLocation {
-        return self
     }
 }
