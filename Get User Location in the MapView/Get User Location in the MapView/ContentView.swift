@@ -13,11 +13,40 @@ struct ContentView: View {
     @StateObject private var viewModel = ContentViewModel()
     
     var body: some View {
-        Map(coordinateRegion: $viewModel.region, showsUserLocation: true)
-            .edgesIgnoringSafeArea(.all)
-            .onAppear {
-                viewModel.checkIfLocationServicesIsEnabled()
+        VStack {
+            Map(coordinateRegion: $viewModel.region, showsUserLocation: true, userTrackingMode: .constant(.follow))
+                .edgesIgnoringSafeArea(.all)
+                .onAppear {
+                    viewModel.checkIfLocationServicesIsEnabled()
+                }
+                .overlay(
+                    MapAnnotationsContainer(mapView: viewModel.mapView)
+                )
+            
+            HStack {
+                Button(action: {
+                    viewModel.startLocationUpdates()
+                }) {
+                    Text("Start")
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                
+                Button(action: {
+                 viewModel.stopLocationUpdates()
+                 viewModel.annotateRoute()
+                    
+                }) {
+                    Text("Finish")
+                        .padding()
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
             }
+        }
     }
 }
 
@@ -35,10 +64,34 @@ enum MapDetails {
 
 final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     
+    private var isUpdatingLocation = false
     @Published var region = MKCoordinateRegion(center: MapDetails.startingLocation, span: MapDetails.defaultSpan)
     var locationManager: CLLocationManager?
     @Published var locationStatus: CLAuthorizationStatus?
     @Published var lastLocation: CLLocation?
+    private var locations: [CLLocation] = []
+    let mapView: MKMapView
+    
+    override init() {
+            mapView = MKMapView()
+            super.init()
+            mapView.delegate = self
+        }
+    
+    func startLocationUpdates() {
+            guard !isUpdatingLocation else { return }
+            
+            isUpdatingLocation = true
+            locations.removeAll()
+            locationManager?.startUpdatingLocation()
+        }
+    
+    func stopLocationUpdates() {
+            guard isUpdatingLocation else { return }
+            
+            isUpdatingLocation = false
+            locationManager?.stopUpdatingLocation()
+        }
     
     func checkIfLocationServicesIsEnabled() {
         if CLLocationManager.locationServicesEnabled() {
@@ -79,5 +132,67 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         guard let location = locations.last else { return }
         lastLocation = location
         print(#function, location)
+        self.locations.append(contentsOf: locations)
+    }
+    
+    func annotateRoute() {
+        guard let startLocation = locations.first,
+              let lastLocation = locations.last else { return }
+        
+        let startAnnotation = MKPointAnnotation()
+        startAnnotation.coordinate = startLocation.coordinate
+        startAnnotation.title = "Start"
+        
+        let finishAnnotation = MKPointAnnotation()
+        finishAnnotation.coordinate = lastLocation.coordinate
+        finishAnnotation.title = "Finish"
+        
+        mapView.addAnnotations([startAnnotation, finishAnnotation])
+        
+        let polyline = MKPolyline(coordinates: locations.map({ $0.coordinate }), count: locations.count)
+        mapView.addOverlay(polyline)
+    }
+}
+
+extension ContentViewModel: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let polyline = overlay as? MKPolyline {
+            let renderer = MKPolylineRenderer(polyline: polyline)
+            renderer.strokeColor = UIColor.blue
+            renderer.lineWidth = 3
+            return renderer
+        }
+        return MKOverlayRenderer()
+    }
+}
+
+struct MapAnnotationsContainer: UIViewRepresentable {
+    let mapView: MKMapView
+    
+    func makeUIView(context: Context) -> MKMapView {
+        mapView.delegate = context.coordinator
+        return mapView
+    }
+    
+    func updateUIView(_ uiView: MKMapView, context: Context) {}
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    class Coordinator: NSObject, MKMapViewDelegate {
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            let identifier = "AnnotationView"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            
+            if annotationView == nil {
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                annotationView?.canShowCallout = true
+            } else {
+                annotationView?.annotation = annotation
+            }
+            
+            return annotationView
+        }
     }
 }
