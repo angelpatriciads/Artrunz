@@ -10,16 +10,8 @@ import MapKit
 
 struct ContentView: View {
     var body: some View {
-        VStack {
             MapView()
-            
-            Button(action: {
-                
-            }, label: {
-                Text("Show Directions")
-            })
-            .padding()
-        }
+            .edgesIgnoringSafeArea(.all)
     }
 }
 

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import CoreLocation
 
 struct ContentView: View {
     
@@ -36,9 +37,8 @@ struct ContentView: View {
                     }
                     
                     Button(action: {
-                     viewModel.stopLocationUpdates()
-                     viewModel.annotateRoute()
-                        
+                        viewModel.stopLocationUpdates()
+                        viewModel.annotateRoute()
                     }) {
                         Text("Finish")
                             .padding()
@@ -79,27 +79,27 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
     let mapView: MKMapView
     
     override init() {
-            mapView = MKMapView()
-            super.init()
-            mapView.delegate = self
-        }
+        mapView = MKMapView()
+        super.init()
+        mapView.delegate = self
+    }
     
     func startLocationUpdates() {
-            guard !isUpdatingLocation else { return }
-            
-            isUpdatingLocation = true
-            startLocation = nil
-            finishLocation = nil
-            locationManager?.startUpdatingLocation()
-        }
+        guard !isUpdatingLocation else { return }
+        
+        isUpdatingLocation = true
+        startLocation = nil
+        finishLocation = nil
+        locationManager?.startUpdatingLocation()
+    }
     
     func stopLocationUpdates() {
-            guard isUpdatingLocation else { return }
-            
-            isUpdatingLocation = false
-            locationManager?.stopUpdatingLocation()
-            annotateRoute()
-        }
+        guard isUpdatingLocation else { return }
+        
+        isUpdatingLocation = false
+        locationManager?.stopUpdatingLocation()
+        annotateRoute()
+    }
     
     func checkIfLocationServicesIsEnabled() {
         if CLLocationManager.locationServicesEnabled() {
@@ -110,9 +110,8 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
             locationManager?.requestWhenInUseAuthorization()
             locationManager?.startUpdatingLocation()
         } else {
-            print("alert")
+            print("Location services are disabled")
         }
-        
     }
     
     private func checkLocationAuthorization() {
@@ -122,11 +121,13 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
         case .notDetermined :
             locationManager.requestWhenInUseAuthorization()
         case .restricted:
-            print("restricted")
+            print("Location services are restricted")
         case .denied:
-            print("denied")
+            print("Location services are denied")
         case .authorizedAlways, .authorizedWhenInUse:
-            region = MKCoordinateRegion(center: locationManager.location!.coordinate, span: MapDetails.defaultSpan)
+            if let currentLocation = locationManager.location {
+                region = MKCoordinateRegion(center: currentLocation.coordinate, span: MapDetails.defaultSpan)
+            }
         @unknown default:
             break
         }
@@ -149,19 +150,19 @@ final class ContentViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
     
     func annotateRoute() {
         guard let startLocation = startLocation,
-              let lastLocation = lastLocation else { return }
+              let finishLocation = lastLocation else { return }
         
         let startAnnotation = MKPointAnnotation()
         startAnnotation.coordinate = startLocation.coordinate
         startAnnotation.title = "Start"
         
         let finishAnnotation = MKPointAnnotation()
-        finishAnnotation.coordinate = lastLocation.coordinate
+        finishAnnotation.coordinate = finishLocation.coordinate
         finishAnnotation.title = "Finish"
         
         mapView.addAnnotations([startAnnotation, finishAnnotation])
         
-        let polyline = MKPolyline(coordinates: [startLocation.coordinate, lastLocation.coordinate], count: 2)
+        let polyline = MKPolyline(coordinates: [startLocation.coordinate, finishLocation.coordinate], count: 2)
         mapView.addOverlay(polyline)
     }
 }
