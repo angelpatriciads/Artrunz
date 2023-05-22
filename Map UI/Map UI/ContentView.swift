@@ -13,6 +13,8 @@ struct ContentView: View {
     
     @StateObject var locationManager = LocationManager()
     
+    @State private var annotationCoordinate: CLLocationCoordinate2D?
+
     var userLatitude: String {
         guard let latitude = locationManager.lastLocation?.coordinate.latitude else {
             return "0"
@@ -25,6 +27,13 @@ struct ContentView: View {
             return "0"
         }
         return String(format: "%.10f", longitude)
+    }
+    
+    var userSpeed: String {
+        guard let speed = locationManager.lastLocation?.speed else {
+            return "0"
+        }
+        return String(format: "%.2f", speed)
     }
     
     var body: some View {
@@ -51,6 +60,21 @@ struct ContentView: View {
                 }
                 .shadow(color: .black, radius: 10)
                 Spacer()
+                HStack {
+                    Spacer()
+                    VStack (alignment: .trailing, spacing: 0){
+                        Text("\(userSpeed)")
+                            .font(.system(size: 50))
+                            .bold()
+                            .foregroundColor(.white)
+                        Text("meters per second")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                    }
+                }
+                .shadow(color: .black, radius: 5)
+                .padding(.bottom,20)
+                .padding()
                 
                 HStack {
                     Button(action: {
@@ -71,7 +95,7 @@ struct ContentView: View {
                     .cornerRadius(8)
                     
                     Button(action: {
-                        
+                        addAnnotation()
                     }) {
                         Text("Add Point")
                             .frame(width: 140, height: 20)
@@ -91,6 +115,12 @@ struct ContentView: View {
             .padding()
         }
         
+    }
+    
+    private func addAnnotation() {
+        if let location = locationManager.lastLocation?.coordinate {
+            annotationCoordinate = location
+        }
     }
 }
 
@@ -184,13 +214,12 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         locationStatus = status
-        print(#function, statusString)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         lastLocation = location
-        print(#function, location)
     }
+    
 }
 
