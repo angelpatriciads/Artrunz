@@ -15,6 +15,8 @@ struct ContentView: View {
     
     @State private var annotationCoordinate: CLLocationCoordinate2D?
 
+    @State private var coordinatesList: [CLLocationCoordinate2D] = []
+    
     var userLatitude: String {
         guard let latitude = locationManager.lastLocation?.coordinate.latitude else {
             return "0"
@@ -38,7 +40,8 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            MapView(showsUserLocation: true, userTrackingMode: .followWithHeading)
+            MapView(locationManager: locationManager, showsUserLocation: true, userTrackingMode: .followWithHeading)
+                .accentColor(Color("blue"))
                 .edgesIgnoringSafeArea(.all)
             
                     
@@ -67,7 +70,7 @@ struct ContentView: View {
                             .font(.system(size: 50))
                             .bold()
                             .foregroundColor(.white)
-                        Text("meters per second")
+                        Text("Meters per Second")
                             .font(.title3)
                             .foregroundColor(.white)
                     }
@@ -78,7 +81,8 @@ struct ContentView: View {
                 
                 HStack {
                     Button(action: {
-                        
+                        coordinatesList.removeAll()
+                        print(coordinatesList)
                     }) {
                         Text("Finish")
                             .frame(width: 140, height: 20)
@@ -119,9 +123,28 @@ struct ContentView: View {
     
     private func addAnnotation() {
         if let location = locationManager.lastLocation?.coordinate {
-            annotationCoordinate = location
+            coordinatesList.append(location)
+            print(coordinatesList)
+            let pin1 = MKPointAnnotation()
+            pin1.coordinate = location
+            pin1.title = "pin1"
+            locationManager.mapView.addAnnotation(pin1)
+            
         }
     }
+    
+    private func createAnnotations() -> [MKAnnotation] {
+            var annotations: [MKAnnotation] = []
+            
+            for coordinate in coordinatesList {
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = coordinate
+                annotations.append(annotation)
+                
+            }
+            
+            return annotations
+        }
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -137,20 +160,20 @@ enum MapDetails {
 
 struct MapView: UIViewRepresentable {
     
-    let mapView = MKMapView()
-    let locationManager = LocationManager()
+    
+    @ObservedObject var locationManager: LocationManager
     var showsUserLocation: Bool
     var userTrackingMode: MKUserTrackingMode
     var region = MKCoordinateRegion(center: MapDetails.startingLocation, span: MapDetails.defaultSpan)
     
     func makeUIView(context: Context) -> MKMapView {
-        mapView.delegate = context.coordinator
-        mapView.overrideUserInterfaceStyle = .dark
-        mapView.mapType = .mutedStandard
-        mapView.showsUserLocation = showsUserLocation
-        mapView.userTrackingMode = userTrackingMode
+        locationManager.mapView.delegate = context.coordinator
+        locationManager.mapView.overrideUserInterfaceStyle = .dark
+        locationManager.mapView.mapType = .mutedStandard
+        locationManager.mapView.showsUserLocation = showsUserLocation
+        locationManager.mapView.userTrackingMode = userTrackingMode
         
-        return mapView
+        return locationManager.mapView
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
@@ -159,7 +182,7 @@ struct MapView: UIViewRepresentable {
     typealias UIViewType = MKMapView
     
     func makeCoordinator() -> MapCoordinator {
-        return MapCoordinator(parent: self)
+        return MapCoordinator(parent: locationManager.mapView)
     }
     
     
@@ -167,17 +190,21 @@ struct MapView: UIViewRepresentable {
 
 extension MapView {
     class MapCoordinator: NSObject, MKMapViewDelegate {
-        let parent: MapView
+        let parent: MKMapView
         
-        init(parent: MapView) {
+        init(parent: MKMapView) {
             self.parent = parent
             super.init()
         }
         
         func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
             let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude), span: MapDetails.defaultSpan)
-            parent.mapView.setRegion(region, animated: true)
+            parent.setRegion(region, animated: true)
+            
+
         }
+        
+        
     }
 }
 
@@ -186,6 +213,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
     @Published var locationStatus: CLAuthorizationStatus?
     @Published var lastLocation: CLLocation?
+    let mapView = MKMapView()
     
     override init() {
         super.init()
