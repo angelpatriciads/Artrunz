@@ -13,7 +13,7 @@ struct ContentView: View {
     
     @StateObject var locationManager = LocationManager()
     
-    @State private var annotationCoordinate: CLLocationCoordinate2D?
+    @State private var lastCoordinate: CLLocationCoordinate2D?
 
     @State private var coordinatesList: [CLLocationCoordinate2D] = []
     
@@ -40,7 +40,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            MapView(locationManager: locationManager, showsUserLocation: true, userTrackingMode: .followWithHeading)
+            MapView(locationManager: locationManager, showsUserLocation: true, userTrackingMode: .followWithHeading, annotations: createAnnotations())
                 .accentColor(Color("blue"))
                 .edgesIgnoringSafeArea(.all)
             
@@ -122,25 +122,32 @@ struct ContentView: View {
     }
     
     private func addAnnotation() {
-        if let location = locationManager.lastLocation?.coordinate {
-            coordinatesList.append(location)
-            print(coordinatesList)
-            let pin1 = MKPointAnnotation()
-            pin1.coordinate = location
-            pin1.title = "pin1"
-            locationManager.mapView.addAnnotation(pin1)
-            
+            if let location = locationManager.lastLocation?.coordinate {
+                coordinatesList.append(location)
+                print(coordinatesList)
+                let pin = MKPointAnnotation()
+                pin.coordinate = location
+                locationManager.mapView.addAnnotation(pin)
+                
+                if coordinatesList.count >= 2 {
+                    addPolyline()
+                }
+            }
         }
-    }
-    
-    private func createAnnotations() -> [MKAnnotation] {
+        
+        private func addPolyline() {
+            let coordinates = coordinatesList.map { $0 }
+            let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+            locationManager.mapView.addOverlay(polyline)
+        }
+        
+        private func createAnnotations() -> [MKAnnotation] {
             var annotations: [MKAnnotation] = []
             
             for coordinate in coordinatesList {
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = coordinate
                 annotations.append(annotation)
-                
             }
             
             return annotations
@@ -165,6 +172,7 @@ struct MapView: UIViewRepresentable {
     var showsUserLocation: Bool
     var userTrackingMode: MKUserTrackingMode
     var region = MKCoordinateRegion(center: MapDetails.startingLocation, span: MapDetails.defaultSpan)
+    var annotations: [MKAnnotation]
     
     func makeUIView(context: Context) -> MKMapView {
         locationManager.mapView.delegate = context.coordinator
@@ -177,6 +185,8 @@ struct MapView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        uiView.removeAnnotations(uiView.annotations)
+        uiView.addAnnotations(annotations)
     }
     
     typealias UIViewType = MKMapView
@@ -184,7 +194,6 @@ struct MapView: UIViewRepresentable {
     func makeCoordinator() -> MapCoordinator {
         return MapCoordinator(parent: locationManager.mapView)
     }
-    
     
 }
 
@@ -200,11 +209,15 @@ extension MapView {
         func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
             let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude), span: MapDetails.defaultSpan)
             parent.setRegion(region, animated: true)
-            
-
         }
         
-        
+        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            let renderer = MKGradientPolylineRenderer(overlay: overlay)
+            renderer.setColors([UIColor(red: 243/255, green: 128/255, blue: 125/255, alpha: 1), UIColor(red: 21/255, green: 209/255, blue: 224/255, alpha: 1)], locations: [])
+            renderer.lineCap = .round
+            renderer.lineWidth = 5
+            return renderer
+        }
     }
 }
 
