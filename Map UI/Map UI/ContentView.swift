@@ -218,6 +218,24 @@ extension MapView {
             renderer.lineWidth = 5
             return renderer
         }
+        
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            if annotation is MKUserLocation {
+                // Customize the user's current location pin
+                let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "userLocation")
+                annotationView.image = UIImage(named: "current-pin")
+                let transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+                annotationView.transform = transform
+                return annotationView
+            } else {
+                // Customize other annotations
+                let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+                annotationView.image = UIImage(named: "progress-pin")
+                let transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+                annotationView.transform = transform
+                return annotationView
+            }
+        }
     }
 }
 
@@ -260,6 +278,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         lastLocation = location
+        print(location)
     }
     
 }
