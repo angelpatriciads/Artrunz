@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import Foundation
 
 struct ContentView: View {
     
@@ -106,21 +107,18 @@ enum MapDetails {
 
 struct MapView: UIViewRepresentable {
     
+    let mapView = MKMapView()
+    let locationManager = LocationManager()
     var showsUserLocation: Bool
     var userTrackingMode: MKUserTrackingMode
     var region = MKCoordinateRegion(center: MapDetails.startingLocation, span: MapDetails.defaultSpan)
     
     func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView()
+        mapView.delegate = context.coordinator
         mapView.overrideUserInterfaceStyle = .dark
         mapView.mapType = .mutedStandard
         mapView.showsUserLocation = showsUserLocation
         mapView.userTrackingMode = userTrackingMode
-        
-        _ = CLLocationCoordinate2D(latitude: 37.331516, longitude: -121.891054)
-        
-        
-        mapView.setRegion(region, animated: true)
         
         return mapView
     }
@@ -130,7 +128,27 @@ struct MapView: UIViewRepresentable {
     
     typealias UIViewType = MKMapView
     
+    func makeCoordinator() -> MapCoordinator {
+        return MapCoordinator(parent: self)
+    }
     
+    
+}
+
+extension MapView {
+    class MapCoordinator: NSObject, MKMapViewDelegate {
+        let parent: MapView
+        
+        init(parent: MapView) {
+            self.parent = parent
+            super.init()
+        }
+        
+        func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
+            let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: userLocation.coordinate.latitude, longitude: userLocation.coordinate.longitude), span: MapDetails.defaultSpan)
+            parent.mapView.setRegion(region, animated: true)
+        }
+    }
 }
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
@@ -138,7 +156,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
     @Published var locationStatus: CLAuthorizationStatus?
     @Published var lastLocation: CLLocation?
-    @Published var region = MKCoordinateRegion()
     
     override init() {
         super.init()
