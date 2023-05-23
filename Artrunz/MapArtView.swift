@@ -60,6 +60,8 @@ struct MapArtView: View {
         return String(format: "%02d:%02d", minutes, seconds)
     }
     
+    @Environment(\.presentationMode) var presentationMode
+    
     var body: some View {
         ZStack {
             
@@ -72,10 +74,26 @@ struct MapArtView: View {
             VStack {
                 if !isFinished {
                     VStack (spacing: 10) {
-                        Text("Your Current Location")
-                            .font(.title2)
-                            .bold()
-                            .foregroundColor(.white)
+                        ZStack {
+                            Text("Your Current Location")
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.white)
+                            
+                            HStack {
+                                Button(action: {
+                                    self.presentationMode.wrappedValue.dismiss()
+                                }, label: {
+                                    Image(systemName: "chevron.left")
+                                        .font(.title2)
+                                        .bold()
+                                        .foregroundColor(.white)
+                                        .shadow(color: .black, radius: 10)
+                                })
+                                
+                                Spacer()
+                            }
+                        }
                         HStack {
                             Text("Latitude: \(userLatitude)")
                             Text("Longitude: \(userLongitude)")
@@ -164,20 +182,31 @@ struct MapArtView: View {
                     .padding(.bottom,30)
                 }
                 else {
-                    VStack {
-                        Text("New Text")
-                            .font(.title)
+                    VStack(spacing:-5) {
+                        Spacer()
+                        Text("Take a screenshot now!")
+                            .font(.system(size: 18))
                             .foregroundColor(.white)
+                        
+                        Button(action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }, label: {
+                            Text("Back to home")
+                                .font(.system(size: 27))
+                                .bold()
+                                .padding()
+                                .foregroundStyle(LinearGradient(colors: [Color("rose"),Color("light-rose")], startPoint: .leading, endPoint: .trailing))
+                        })
                     }
                     .onAppear {
-                                self.counter += 1
-                            }
+                        self.counter += 1
+                    }
                     .confettiCannon(counter: $counter, num: 100, openingAngle: Angle(degrees: 0), closingAngle: Angle(degrees: 360), radius: 250)
                 }
             }
             .padding()
         }
-        
+        .navigationBarBackButtonHidden(true)
         
     }
     
