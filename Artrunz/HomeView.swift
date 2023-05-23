@@ -9,34 +9,40 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
-        ZStack {
-            Image("home-background")
-                .resizable()
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack(spacing: 50) {
-                Image("home-logo")
+        NavigationStack {
+            ZStack {
+                Image("home-background")
                     .resizable()
-                    .scaledToFit()
-                    .frame(width: 250)
+                    .edgesIgnoringSafeArea(.all)
                 
-                Button(action: {
+                VStack(spacing: 50) {
+                    Image("home-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 250)
                     
-                }, label: {
-                    Text("Finish")
-                        .frame(width: 300, height: 20)
-                        .font(.headline)
-                        .padding()
-                        .foregroundColor(.white)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(LinearGradient(colors: [Color("yellow"),Color.white,Color("yellow")], startPoint: .leading, endPoint: .trailing), lineWidth: 3)
-                            )
-                })
-                .background(Color("yellow").opacity(0.2))
-                .cornerRadius(8)
+                    Button(action: {
+                        
+                    }, label: {
+                        NavigationLink(destination: MapArtView()){
+                            Text("Start Move!")
+                                .frame(width: 300, height: 20)
+                                .font(.headline)
+                                .padding()
+                                .foregroundColor(.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(LinearGradient(colors: [Color("yellow"),Color.white,Color("yellow")], startPoint: .leading, endPoint: .trailing), lineWidth: 3)
+                                    )
+                        }
+                        
+                    })
+                    .background(Color("yellow").opacity(0.2))
+                    .cornerRadius(8)
+                }
             }
         }
+        
     }
 }
 
