@@ -25,6 +25,8 @@ struct ContentView: View {
     
     @State private var isTimerRunning = false
     
+    @State private var userTrackingModes: MKUserTrackingMode = .followWithHeading
+    
     var userLatitude: String {
         guard let latitude = locationManager.lastLocation?.coordinate.latitude else {
             return "0"
@@ -54,7 +56,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            MapView(locationManager: locationManager, showsUserLocation: true, userTrackingMode: .followWithHeading, annotations: createAnnotations())
+            MapView(locationManager: locationManager, showsUserLocation: false, userTrackingMode: userTrackingModes, annotations: createAnnotations())
                 .accentColor(Color("blue"))
                 .edgesIgnoringSafeArea(.all)
             
@@ -69,8 +71,8 @@ struct ContentView: View {
                         .bold()
                         .foregroundColor(.white)
                     HStack {
-                        Text("latitude: \(userLatitude)")
-                        Text("longitude: \(userLongitude)")
+                        Text("Latitude: \(userLatitude)")
+                        Text("Longitude: \(userLongitude)")
                     }
                     .font(.footnote)
                     .foregroundColor(.white)
@@ -106,6 +108,7 @@ struct ContentView: View {
                         coordinatesList.removeAll()
                         print(coordinatesList)
                         stopTimer()
+                        stopTrackingUserLocation()
                     }) {
                         Text("Finish")
                             .frame(width: 140, height: 20)
@@ -208,6 +211,12 @@ struct ContentView: View {
         timer?.invalidate()
         timer = nil
     }
+    
+    private func stopTrackingUserLocation() {
+            userTrackingModes = .none
+            print(userTrackingModes)
+        }
+
 }
 
 struct ContentView_Previews: PreviewProvider {

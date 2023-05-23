@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D6ADE12F2A1C7979000F0B8A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D6ADE12E2A1C7979000F0B8A /* LaunchScreen.storyboard */; };
+		D6ADE1312A1CA67F000F0B8A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE1302A1CA67F000F0B8A /* HomeView.swift */; };
 		D6E829642A1C77A8001A77E0 /* ArtrunzApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E829632A1C77A8001A77E0 /* ArtrunzApp.swift */; };
 		D6E829662A1C77A8001A77E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E829652A1C77A8001A77E0 /* ContentView.swift */; };
 		D6E829682A1C77A9001A77E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6E829672A1C77A9001A77E0 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* Begin PBXFileReference section */
 		D6ADE12D2A1C7800000F0B8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D6ADE12E2A1C7979000F0B8A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D6ADE1302A1CA67F000F0B8A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		D6E829602A1C77A8001A77E0 /* Artrunz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Artrunz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6E829632A1C77A8001A77E0 /* ArtrunzApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtrunzApp.swift; sourceTree = "<group>"; };
 		D6E829652A1C77A8001A77E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -38,6 +40,7 @@
 		D6E829572A1C77A8001A77E0 = {
 			isa = PBXGroup;
 			children = (
+				D6ADE1302A1CA67F000F0B8A /* HomeView.swift */,
 				D6E829622A1C77A8001A77E0 /* Artrunz */,
 				D6E829612A1C77A8001A77E0 /* Products */,
 			);
@@ -143,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6ADE1312A1CA67F000F0B8A /* HomeView.swift in Sources */,
 				D6E829662A1C77A8001A77E0 /* ContentView.swift in Sources */,
 				D6E829642A1C77A8001A77E0 /* ArtrunzApp.swift in Sources */,
 			);

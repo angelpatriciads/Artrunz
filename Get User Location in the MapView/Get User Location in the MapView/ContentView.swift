@@ -14,7 +14,7 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            Map(coordinateRegion: $viewModel.region, showsUserLocation: true, userTrackingMode: .constant(.follow))
+            Map(coordinateRegion: $viewModel.region, showsUserLocation: true, userTrackingMode: .constant(.none))
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
                     viewModel.checkIfLocationServicesIsEnabled()
