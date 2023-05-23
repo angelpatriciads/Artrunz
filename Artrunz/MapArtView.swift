@@ -89,6 +89,7 @@ struct MapArtView: View {
                                         .bold()
                                         .foregroundColor(.white)
                                         .shadow(color: .black, radius: 10)
+                                        .frame(width: 30, height: 30)
                                 })
                                 
                                 Spacer()
