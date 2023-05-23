@@ -64,12 +64,9 @@ struct MapArtView: View {
             
             
             VStack {
-                VStack {
+                VStack (spacing: 10) {
                     Text("Your Current Location")
                         .font(.title2)
-                        .bold()
-                        .foregroundColor(.white)
-                    Text("location status: \(locationManager.statusString)")
                         .bold()
                         .foregroundColor(.white)
                     HStack {
@@ -82,25 +79,37 @@ struct MapArtView: View {
                 .shadow(color: .black, radius: 10)
                 Spacer()
                 HStack {
-                    Spacer()
-                    VStack (alignment: .trailing, spacing: 0){
-                        Text("\(userSpeed)")
-                            .font(.system(size: 50))
-                            .bold()
-                            .foregroundColor(.white)
-                        Text("Meters per Second")
-                            .font(.title3)
-                            .foregroundColor(.white)
+                    VStack (alignment: .leading) {
+                        Text("Total Distance")
+                            .font(.system(size: 20))
                         
-                        Text("Total Distance: \(totalDistance, specifier: "%.2f") meters")
-                            .font(.footnote)
-                            .foregroundColor(.white)
+                        HStack {
+                            Text("\(totalDistance, specifier: "%.2f")")
+                                .font(.system(size: 30))
+                                .bold()
+                            
+                            VStack {
+                                Spacer()
+                                Text("Meters")
+                                    .font(.system(size: 12))
+                            }
+                        }
                         
-                        Text("Elapsed Time: \(formattedElapsedTime)")
-                            .font(.footnote)
-                            .foregroundColor(.white)
                     }
+                    
+                    Spacer()
+                    VStack(alignment: .trailing){
+                        Text("Elapsed Time")
+                            .font(.system(size: 20))
+                        Text("\(formattedElapsedTime)")
+                            .font(.system(size: 30))
+                            .bold()
+                    }
+                    
+                                         
                 }
+                .frame(height: 0)
+                .foregroundColor(.white)
                 .shadow(color: .black, radius: 5)
                 .padding(.bottom,20)
                 .padding()
@@ -119,7 +128,7 @@ struct MapArtView: View {
                             .foregroundColor(.white)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color("rose"), lineWidth: 3)
+                                    .stroke(LinearGradient(colors: [Color("rose"),Color.white], startPoint: .leading, endPoint: .trailing), lineWidth: 3)
                             )
                         
                     }
