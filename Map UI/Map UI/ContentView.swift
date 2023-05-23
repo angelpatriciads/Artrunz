@@ -14,8 +14,10 @@ struct ContentView: View {
     @StateObject var locationManager = LocationManager()
     
     @State private var lastCoordinate: CLLocationCoordinate2D?
-
+    
     @State private var coordinatesList: [CLLocationCoordinate2D] = []
+    
+    @State private var totalDistance: CLLocationDistance = 0.0
     
     var userLatitude: String {
         guard let latitude = locationManager.lastLocation?.coordinate.latitude else {
@@ -44,7 +46,7 @@ struct ContentView: View {
                 .accentColor(Color("blue"))
                 .edgesIgnoringSafeArea(.all)
             
-                    
+            
             VStack {
                 VStack {
                     Text("Your Current Location")
@@ -72,6 +74,10 @@ struct ContentView: View {
                             .foregroundColor(.white)
                         Text("Meters per Second")
                             .font(.title3)
+                            .foregroundColor(.white)
+                        
+                        Text("Total Distance: \(totalDistance, specifier: "%.2f") meters")
+                            .font(.footnote)
                             .foregroundColor(.white)
                     }
                 }
@@ -110,7 +116,7 @@ struct ContentView: View {
                     }
                     .background(Color("rose"))
                     .cornerRadius(8)
-
+                    
                 }
                 .padding(.bottom,30)
                 
@@ -122,36 +128,52 @@ struct ContentView: View {
     }
     
     private func addAnnotation() {
-            if let location = locationManager.lastLocation?.coordinate {
-                coordinatesList.append(location)
-                print(coordinatesList)
-                let pin = MKPointAnnotation()
-                pin.coordinate = location
-                locationManager.mapView.addAnnotation(pin)
-                
-                if coordinatesList.count >= 2 {
-                    addPolyline()
-                }
+        if let location = locationManager.lastLocation?.coordinate {
+            coordinatesList.append(location)
+            print(coordinatesList)
+            let pin = MKPointAnnotation()
+            pin.coordinate = location
+            locationManager.mapView.addAnnotation(pin)
+            
+            if coordinatesList.count >= 2 {
+                addPolyline()
+                updateTotalDistance()
             }
         }
+    }
+    
+    private func addPolyline() {
+        let coordinates = coordinatesList.map { $0 }
+        let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+        locationManager.mapView.addOverlay(polyline)
+    }
+    
+    private func createAnnotations() -> [MKAnnotation] {
+        var annotations: [MKAnnotation] = []
         
-        private func addPolyline() {
-            let coordinates = coordinatesList.map { $0 }
-            let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
-            locationManager.mapView.addOverlay(polyline)
+        for coordinate in coordinatesList {
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            annotations.append(annotation)
         }
         
-        private func createAnnotations() -> [MKAnnotation] {
-            var annotations: [MKAnnotation] = []
-            
-            for coordinate in coordinatesList {
-                let annotation = MKPointAnnotation()
-                annotation.coordinate = coordinate
-                annotations.append(annotation)
-            }
-            
-            return annotations
+        return annotations
+    }
+    
+    private func updateTotalDistance() {
+        guard coordinatesList.count >= 2 else {
+            totalDistance = 0.0
+            return
         }
+        
+        let lastIndex = coordinatesList.count - 1
+        let startLocation = CLLocation(latitude: coordinatesList[lastIndex - 1].latitude, longitude: coordinatesList[lastIndex - 1].longitude)
+        let endLocation = CLLocation(latitude: coordinatesList[lastIndex].latitude, longitude: coordinatesList[lastIndex].longitude)
+        
+        let distance = startLocation.distance(from: endLocation)
+        totalDistance += distance
+        print("Total Distance: \(totalDistance)")
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
