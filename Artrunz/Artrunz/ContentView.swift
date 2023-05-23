@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  Map UI
+//  Artrunz
 //
-//  Created by Angelica Patricia on 22/05/23.
+//  Created by Angelica Patricia on 23/05/23.
 //
 
 import SwiftUI
