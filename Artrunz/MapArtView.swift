@@ -8,6 +8,8 @@
 import SwiftUI
 import CoreLocation
 import MapKit
+import ConfettiSwiftUI
+
 
 struct MapArtView: View {
     
@@ -29,18 +31,20 @@ struct MapArtView: View {
     
     @State private var isFinished = false
     
+    @State private var counter: Int = 1
+    
     var userLatitude: String {
         guard let latitude = locationManager.lastLocation?.coordinate.latitude else {
             return "0"
         }
-        return String(format: "%.10f", latitude)
+        return String(format: "%.8f", latitude)
     }
     
     var userLongitude: String {
         guard let longitude = locationManager.lastLocation?.coordinate.latitude else {
             return "0"
         }
-        return String(format: "%.10f", longitude)
+        return String(format: "%.8f", longitude)
     }
     
     var userSpeed: String {
@@ -165,10 +169,15 @@ struct MapArtView: View {
                             .font(.title)
                             .foregroundColor(.white)
                     }
+                    .onAppear {
+                                self.counter += 1
+                            }
+                    .confettiCannon(counter: $counter, num: 100, openingAngle: Angle(degrees: 0), closingAngle: Angle(degrees: 360), radius: 250)
                 }
             }
             .padding()
         }
+        
         
     }
     
