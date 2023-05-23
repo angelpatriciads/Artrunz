@@ -19,6 +19,12 @@ struct ContentView: View {
     
     @State private var totalDistance: CLLocationDistance = 0.0
     
+    @State private var timer: Timer?
+    
+    @State private var elapsedTime: TimeInterval = 0.0
+    
+    @State private var isTimerRunning = false
+    
     var userLatitude: String {
         guard let latitude = locationManager.lastLocation?.coordinate.latitude else {
             return "0"
@@ -38,6 +44,12 @@ struct ContentView: View {
             return "0"
         }
         return String(format: "%.2f", speed)
+    }
+    
+    var formattedElapsedTime: String {
+        let minutes = Int(elapsedTime) / 60
+        let seconds = Int(elapsedTime) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
     
     var body: some View {
@@ -79,6 +91,10 @@ struct ContentView: View {
                         Text("Total Distance: \(totalDistance, specifier: "%.2f") meters")
                             .font(.footnote)
                             .foregroundColor(.white)
+                        
+                        Text("Elapsed Time: \(formattedElapsedTime)")
+                            .font(.footnote)
+                            .foregroundColor(.white)
                     }
                 }
                 .shadow(color: .black, radius: 5)
@@ -89,6 +105,7 @@ struct ContentView: View {
                     Button(action: {
                         coordinatesList.removeAll()
                         print(coordinatesList)
+                        stopTimer()
                     }) {
                         Text("Finish")
                             .frame(width: 140, height: 20)
@@ -106,6 +123,10 @@ struct ContentView: View {
                     
                     Button(action: {
                         addAnnotation()
+                        
+                        if !isTimerRunning {
+                                startTimer()
+                            }
                     }) {
                         Text("Add Point")
                             .frame(width: 140, height: 20)
@@ -173,6 +194,19 @@ struct ContentView: View {
         let distance = startLocation.distance(from: endLocation)
         totalDistance += distance
         print("Total Distance: \(totalDistance)")
+    }
+    
+    private func startTimer() {
+        isTimerRunning = true
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            elapsedTime += 1.0
+        }
+    }
+
+    private func stopTimer() {
+        isTimerRunning = false
+        timer?.invalidate()
+        timer = nil
     }
 }
 
