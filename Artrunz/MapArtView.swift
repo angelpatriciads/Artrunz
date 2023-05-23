@@ -24,8 +24,8 @@ struct MapArtView: View {
     @State private var elapsedTime: TimeInterval = 0.0
     
     @State private var isTimerRunning = false
-    
-    @State private var userTrackingModes: MKUserTrackingMode = .followWithHeading
+        
+    @State private var showsUserLocation: Bool = true
     
     var userLatitude: String {
         guard let latitude = locationManager.lastLocation?.coordinate.latitude else {
@@ -56,7 +56,9 @@ struct MapArtView: View {
     
     var body: some View {
         ZStack {
-            MapView(locationManager: locationManager, showsUserLocation: false, userTrackingMode: userTrackingModes, annotations: createAnnotations())
+            
+            // MARK: Map
+            MapView(locationManager: locationManager, showsUserLocation: showsUserLocation, annotations: createAnnotations(), userTrackingMode: .followWithHeading)
                 .accentColor(Color("blue"))
                 .edgesIgnoringSafeArea(.all)
             
@@ -108,7 +110,7 @@ struct MapArtView: View {
                         coordinatesList.removeAll()
                         print(coordinatesList)
                         stopTimer()
-                        stopTrackingUserLocation()
+                        showsUserLocation = false
                     }) {
                         Text("Finish")
                             .frame(width: 140, height: 20)
@@ -151,6 +153,7 @@ struct MapArtView: View {
         
     }
     
+    // MARK: Function
     private func addAnnotation() {
         if let location = locationManager.lastLocation?.coordinate {
             coordinatesList.append(location)
@@ -211,11 +214,6 @@ struct MapArtView: View {
         timer?.invalidate()
         timer = nil
     }
-    
-    private func stopTrackingUserLocation() {
-            userTrackingModes = .none
-            print(userTrackingModes)
-        }
 }
 
 struct MapArtView_Previews: PreviewProvider {
@@ -234,9 +232,9 @@ struct MapView: UIViewRepresentable {
     
     @ObservedObject var locationManager: LocationManager
     var showsUserLocation: Bool
-    var userTrackingMode: MKUserTrackingMode
     var region = MKCoordinateRegion(center: MapDetails.startingLocation, span: MapDetails.defaultSpan)
     var annotations: [MKAnnotation]
+    var userTrackingMode: MKUserTrackingMode
     
     func makeUIView(context: Context) -> MKMapView {
         locationManager.mapView.delegate = context.coordinator
@@ -249,6 +247,7 @@ struct MapView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        uiView.showsUserLocation = showsUserLocation
         uiView.removeAnnotations(uiView.annotations)
         uiView.addAnnotations(annotations)
     }
