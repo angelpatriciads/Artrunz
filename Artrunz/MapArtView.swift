@@ -24,8 +24,10 @@ struct MapArtView: View {
     @State private var elapsedTime: TimeInterval = 0.0
     
     @State private var isTimerRunning = false
-        
+    
     @State private var showsUserLocation: Bool = true
+    
+    @State private var isFinished = false
     
     var userLatitude: String {
         guard let latitude = locationManager.lastLocation?.coordinate.latitude else {
@@ -64,98 +66,106 @@ struct MapArtView: View {
             
             
             VStack {
-                VStack (spacing: 10) {
-                    Text("Your Current Location")
-                        .font(.title2)
-                        .bold()
-                        .foregroundColor(.white)
-                    HStack {
-                        Text("Latitude: \(userLatitude)")
-                        Text("Longitude: \(userLongitude)")
-                    }
-                    .font(.footnote)
-                    .foregroundColor(.white)
-                }
-                .shadow(color: .black, radius: 10)
-                Spacer()
-                HStack {
-                    VStack (alignment: .leading) {
-                        Text("Total Distance")
-                            .font(.system(size: 20))
-                        
+                if !isFinished {
+                    VStack (spacing: 10) {
+                        Text("Your Current Location")
+                            .font(.title2)
+                            .bold()
+                            .foregroundColor(.white)
                         HStack {
-                            Text("\(totalDistance, specifier: "%.2f")")
-                                .font(.system(size: 30))
-                                .bold()
+                            Text("Latitude: \(userLatitude)")
+                            Text("Longitude: \(userLongitude)")
+                        }
+                        .font(.footnote)
+                        .foregroundColor(.white)
+                    }
+                    .shadow(color: .black, radius: 10)
+                    Spacer()
+                    HStack {
+                        VStack (alignment: .leading) {
+                            Text("Total Distance")
+                                .font(.system(size: 20))
                             
-                            VStack {
-                                Spacer()
-                                Text("Meters")
-                                    .font(.system(size: 12))
+                            HStack {
+                                Text("\(totalDistance, specifier: "%.2f")")
+                                    .font(.system(size: 30))
+                                    .bold()
+                                
+                                VStack {
+                                    Spacer()
+                                    Text("Meters")
+                                        .font(.system(size: 12))
+                                }
                             }
+                            
                         }
                         
-                    }
-                    
-                    Spacer()
-                    VStack(alignment: .trailing){
-                        Text("Elapsed Time")
-                            .font(.system(size: 20))
-                        Text("\(formattedElapsedTime)")
-                            .font(.system(size: 30))
-                            .bold()
-                    }
-                    
-                                         
-                }
-                .frame(height: 0)
-                .foregroundColor(.white)
-                .shadow(color: .black, radius: 5)
-                .padding(.bottom,20)
-                .padding()
-                
-                HStack {
-                    Button(action: {
-                        coordinatesList.removeAll()
-                        print(coordinatesList)
-                        stopTimer()
-                        showsUserLocation = false
-                    }) {
-                        Text("Finish")
-                            .frame(width: 140, height: 20)
-                            .font(.headline)
-                            .padding()
-                            .foregroundColor(.white)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(LinearGradient(colors: [Color("rose"),Color.white], startPoint: .leading, endPoint: .trailing), lineWidth: 3)
-                            )
+                        Spacer()
+                        VStack(alignment: .trailing){
+                            Text("Elapsed Time")
+                                .font(.system(size: 20))
+                            Text("\(formattedElapsedTime)")
+                                .font(.system(size: 30))
+                                .bold()
+                        }
+                        
                         
                     }
-                    .background(Color("rose").opacity(0.2))
-                    .cornerRadius(8)
+                    .frame(height: 0)
+                    .foregroundColor(.white)
+                    .shadow(color: .black, radius: 5)
+                    .padding(.bottom,20)
+                    .padding()
                     
-                    Button(action: {
-                        addAnnotation()
+                    HStack {
+                        Button(action: {
+                            coordinatesList.removeAll()
+                            print(coordinatesList)
+                            stopTimer()
+                            showsUserLocation = false
+                            finishButtonTapped()
+                        }) {
+                            Text("Finish")
+                                .frame(width: 140, height: 20)
+                                .font(.headline)
+                                .padding()
+                                .foregroundColor(.white)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(LinearGradient(colors: [Color("rose"),Color.white], startPoint: .leading, endPoint: .trailing), lineWidth: 3)
+                                )
+                            
+                        }
+                        .background(Color("rose").opacity(0.2))
+                        .cornerRadius(8)
                         
-                        if !isTimerRunning {
+                        Button(action: {
+                            addAnnotation()
+                            
+                            if !isTimerRunning {
                                 startTimer()
                             }
-                    }) {
-                        Text("Add Point")
-                            .frame(width: 140, height: 20)
-                            .font(.headline)
-                            .padding()
-                            .foregroundColor(.white)
+                        }) {
+                            Text("Add Point")
+                                .frame(width: 140, height: 20)
+                                .font(.headline)
+                                .padding()
+                                .foregroundColor(.white)
+                            
+                        }
+                        .background(Color("rose"))
+                        .cornerRadius(8)
                         
                     }
-                    .background(Color("rose"))
-                    .cornerRadius(8)
-                    
+                    .padding(.bottom,30)
                 }
-                .padding(.bottom,30)
-                
-                
+                else {
+                    VStack {
+                        Text("New Text")
+                            .font(.title)
+                            .foregroundColor(.white)
+                    }
+                }
             }
             .padding()
         }
@@ -217,11 +227,15 @@ struct MapArtView: View {
             elapsedTime += 1.0
         }
     }
-
+    
     private func stopTimer() {
         isTimerRunning = false
         timer?.invalidate()
         timer = nil
+    }
+    
+    private func finishButtonTapped() {
+        isFinished = true
     }
 }
 
