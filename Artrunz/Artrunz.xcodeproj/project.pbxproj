@@ -11,6 +11,12 @@
 		D6ADE1312A1CA67F000F0B8A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE1302A1CA67F000F0B8A /* HomeView.swift */; };
 		D6ADE1352A1CA927000F0B8A /* MapArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE1342A1CA927000F0B8A /* MapArtView.swift */; };
 		D6ADE1382A1CE4C2000F0B8A /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = D6ADE1372A1CE4C2000F0B8A /* ConfettiSwiftUI */; };
+		D6ADE13D2A1D92A7000F0B8A /* ArtGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE13C2A1D92A7000F0B8A /* ArtGalleryView.swift */; };
+		D6ADE1412A1D9413000F0B8A /* SavingImgDatabase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE13F2A1D9413000F0B8A /* SavingImgDatabase.xcdatamodeld */; };
+		D6ADE1442A1D94C7000F0B8A /* Saving+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE1422A1D94C7000F0B8A /* Saving+CoreDataClass.swift */; };
+		D6ADE1452A1D94C7000F0B8A /* Saving+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE1432A1D94C7000F0B8A /* Saving+CoreDataProperties.swift */; };
+		D6ADE1482A1DAA78000F0B8A /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE1472A1DAA78000F0B8A /* ImagePicker.swift */; };
+		D6ADE14A2A1DB224000F0B8A /* PersistentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ADE1492A1DB224000F0B8A /* PersistentController.swift */; };
 		D6E829642A1C77A8001A77E0 /* ArtrunzApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E829632A1C77A8001A77E0 /* ArtrunzApp.swift */; };
 		D6E829662A1C77A8001A77E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E829652A1C77A8001A77E0 /* ContentView.swift */; };
 		D6E829682A1C77A9001A77E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6E829672A1C77A9001A77E0 /* Assets.xcassets */; };
@@ -22,6 +28,12 @@
 		D6ADE12E2A1C7979000F0B8A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D6ADE1302A1CA67F000F0B8A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		D6ADE1342A1CA927000F0B8A /* MapArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapArtView.swift; sourceTree = "<group>"; };
+		D6ADE13C2A1D92A7000F0B8A /* ArtGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtGalleryView.swift; sourceTree = "<group>"; };
+		D6ADE1402A1D9413000F0B8A /* SavingImgDatabase.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SavingImgDatabase.xcdatamodel; sourceTree = "<group>"; };
+		D6ADE1422A1D94C7000F0B8A /* Saving+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Saving+CoreDataClass.swift"; sourceTree = "<group>"; };
+		D6ADE1432A1D94C7000F0B8A /* Saving+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Saving+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		D6ADE1472A1DAA78000F0B8A /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		D6ADE1492A1DB224000F0B8A /* PersistentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentController.swift; sourceTree = "<group>"; };
 		D6E829602A1C77A8001A77E0 /* Artrunz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Artrunz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D6E829632A1C77A8001A77E0 /* ArtrunzApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtrunzApp.swift; sourceTree = "<group>"; };
 		D6E829652A1C77A8001A77E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -46,13 +58,34 @@
 			children = (
 				D6ADE1342A1CA927000F0B8A /* MapArtView.swift */,
 				D6ADE1302A1CA67F000F0B8A /* HomeView.swift */,
+				D6ADE13C2A1D92A7000F0B8A /* ArtGalleryView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		D6ADE13E2A1D93D3000F0B8A /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				D6ADE13F2A1D9413000F0B8A /* SavingImgDatabase.xcdatamodeld */,
+				D6ADE1492A1DB224000F0B8A /* PersistentController.swift */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		D6ADE1462A1DAA6D000F0B8A /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				D6ADE1472A1DAA78000F0B8A /* ImagePicker.swift */,
+			);
+			path = Component;
 			sourceTree = "<group>";
 		};
 		D6E829572A1C77A8001A77E0 = {
 			isa = PBXGroup;
 			children = (
+				D6ADE1462A1DAA6D000F0B8A /* Component */,
+				D6ADE1422A1D94C7000F0B8A /* Saving+CoreDataClass.swift */,
+				D6ADE1432A1D94C7000F0B8A /* Saving+CoreDataProperties.swift */,
 				D6E829622A1C77A8001A77E0 /* Artrunz */,
 				D6E829612A1C77A8001A77E0 /* Products */,
 			);
@@ -69,6 +102,7 @@
 		D6E829622A1C77A8001A77E0 /* Artrunz */ = {
 			isa = PBXGroup;
 			children = (
+				D6ADE13E2A1D93D3000F0B8A /* CoreData */,
 				D6ADE1392A1D8EBC000F0B8A /* View */,
 				D6ADE12D2A1C7800000F0B8A /* Info.plist */,
 				D6E829632A1C77A8001A77E0 /* ArtrunzApp.swift */,
@@ -165,10 +199,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6ADE1442A1D94C7000F0B8A /* Saving+CoreDataClass.swift in Sources */,
 				D6ADE1312A1CA67F000F0B8A /* HomeView.swift in Sources */,
 				D6E829662A1C77A8001A77E0 /* ContentView.swift in Sources */,
+				D6ADE1482A1DAA78000F0B8A /* ImagePicker.swift in Sources */,
+				D6ADE1412A1D9413000F0B8A /* SavingImgDatabase.xcdatamodeld in Sources */,
 				D6E829642A1C77A8001A77E0 /* ArtrunzApp.swift in Sources */,
+				D6ADE14A2A1DB224000F0B8A /* PersistentController.swift in Sources */,
+				D6ADE1452A1D94C7000F0B8A /* Saving+CoreDataProperties.swift in Sources */,
 				D6ADE1352A1CA927000F0B8A /* MapArtView.swift in Sources */,
+				D6ADE13D2A1D92A7000F0B8A /* ArtGalleryView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +436,19 @@
 			productName = ConfettiSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		D6ADE13F2A1D9413000F0B8A /* SavingImgDatabase.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				D6ADE1402A1D9413000F0B8A /* SavingImgDatabase.xcdatamodel */,
+			);
+			currentVersion = D6ADE1402A1D9413000F0B8A /* SavingImgDatabase.xcdatamodel */;
+			path = SavingImgDatabase.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = D6E829582A1C77A8001A77E0 /* Project object */;
 }
