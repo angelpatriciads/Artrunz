@@ -134,6 +134,10 @@ struct AddArtView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    var isSubmitButtonDisabled: Bool {
+            return image.isEmpty || name.isEmpty || dist.isEmpty || time.isEmpty
+        }
+    
     var body: some View {
         ZStack {
             Image("art-gallery-background")
@@ -257,9 +261,15 @@ struct AddArtView: View {
                                 .foregroundColor(.white)
 
                     })
-                    .background(Color("rose"))
+                    .background(isSubmitButtonDisabled ? Color.gray : Color("rose"))
                     .cornerRadius(8)
                     .padding(.top,25)
+                    .disabled(isSubmitButtonDisabled)
+                    
+                    if isSubmitButtonDisabled {
+                        Text("Fill all of the form to enable this button!")
+                            .font(.footnote)
+                    }
                     
                     Spacer()
                 }
@@ -290,3 +300,4 @@ struct SuperTextField: View {
     }
     
 }
+
