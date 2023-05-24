@@ -41,11 +41,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D6E829572A1C77A8001A77E0 = {
+		D6ADE1392A1D8EBC000F0B8A /* View */ = {
 			isa = PBXGroup;
 			children = (
 				D6ADE1342A1CA927000F0B8A /* MapArtView.swift */,
 				D6ADE1302A1CA67F000F0B8A /* HomeView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D6E829572A1C77A8001A77E0 = {
+			isa = PBXGroup;
+			children = (
 				D6E829622A1C77A8001A77E0 /* Artrunz */,
 				D6E829612A1C77A8001A77E0 /* Products */,
 			);
@@ -62,6 +69,7 @@
 		D6E829622A1C77A8001A77E0 /* Artrunz */ = {
 			isa = PBXGroup;
 			children = (
+				D6ADE1392A1D8EBC000F0B8A /* View */,
 				D6ADE12D2A1C7800000F0B8A /* Info.plist */,
 				D6E829632A1C77A8001A77E0 /* ArtrunzApp.swift */,
 				D6E829652A1C77A8001A77E0 /* ContentView.swift */,

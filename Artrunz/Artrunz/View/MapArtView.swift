@@ -184,6 +184,41 @@ struct MapArtView: View {
                 }
                 else {
                     VStack(spacing:-5) {
+                        HStack {
+                            VStack (alignment: .leading) {
+                                Text("Total Distance")
+                                    .font(.system(size: 20))
+                                
+                                HStack {
+                                    Text("\(totalDistance, specifier: "%.2f")")
+                                        .font(.system(size: 30))
+                                        .bold()
+                                    
+                                    VStack {
+                                        Spacer()
+                                        Text("Meters")
+                                            .font(.system(size: 12))
+                                    }
+                                }
+                                
+                            }
+                            
+                            Spacer()
+                            VStack(alignment: .trailing){
+                                Text("Elapsed Time")
+                                    .font(.system(size: 20))
+                                Text("\(formattedElapsedTime)")
+                                    .font(.system(size: 30))
+                                    .bold()
+                            }
+                            
+                            
+                        }
+                        .frame(height: 0)
+                        .foregroundColor(.white)
+                        .shadow(color: .black, radius: 5)
+                        .padding(.bottom,20)
+                        .padding()
                         Spacer()
                         Text("Take a screenshot now!")
                             .font(.system(size: 18))
