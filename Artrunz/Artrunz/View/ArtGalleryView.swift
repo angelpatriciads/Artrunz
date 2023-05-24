@@ -30,13 +30,54 @@ struct ArtGalleryView: View {
                     .resizable()
                     .edgesIgnoringSafeArea(.all)
                 
-                List(savings, id: \.self) { save in
-                    VStack {
-                        Image(uiImage: UIImage(data: save.id ?? self.image)!)
-                            .resizable()
-                            .frame(width: 333, height: 505)
-                            .cornerRadius(20)
+                VStack {
+                    List(savings, id: \.self) { save in
+                        VStack (alignment: .center) {
+                            HStack {
+                                Text("\(save.name ?? "")")
+                                Spacer()
+                            }
+                            .font(.system(size: 30))
+                            .bold()
+                            .shadow(color: .black, radius: 5)
+                            .padding([.leading,.trailing],10)
+                            
+                            Image(uiImage: UIImage(data: save.id ?? self.image)!)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 333, height: 505)
+                                .cornerRadius(20)
+                                .shadow(color: .black, radius: 5)
+                                .padding(.bottom)
+                            
+                            HStack {
+                                VStack (alignment: .leading) {
+                                    Text("Distance (m)")
+                                        .font(.system(size: 20))
+                                    Text("\(save.dist ?? "")")
+                                        .font(.system(size: 30))
+                                        .bold()
+                                }
+                                
+                                Spacer()
+                                VStack(alignment: .trailing){
+                                    Text("Total Time")
+                                        .font(.system(size: 20))
+                                    Text("\(save.time ?? "")")
+                                        .font(.system(size: 30))
+                                        .bold()
+                                }
+                                
+                            }
+                            .foregroundColor(.white)
+                            .shadow(color: .black, radius: 5)
+                            .padding([.leading,.trailing],10)
+                        }
+                        .foregroundColor(.white)
+                        .listRowBackground(Color.clear)
                     }
+                    .listStyle(PlainListStyle())
+                    .background(Color.clear)
                 }
             }
         }
@@ -167,7 +208,7 @@ struct AddArtView: View {
                             .padding(.leading, 5)
                             
                             SuperTextField(
-                                placeholder: Text("Ex. 120").foregroundColor(.white.opacity(0.5)),
+                                placeholder: Text("Ex. 18.21").foregroundColor(.white.opacity(0.5)),
                                 text: self.$dist
                             )
                             .padding()
