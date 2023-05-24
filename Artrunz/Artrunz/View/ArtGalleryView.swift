@@ -197,7 +197,8 @@ struct AddArtView: View {
                             Button(action: {
                                 self.show.toggle()
                             }) {
-                                Image(systemName: "photo.fill")
+                                Image("upload-your-art")
+                                    .resizable()
                                     .font(.system(size: 250))
                                     .frame(width: 333, height: 500)
                                     .shadow(color: .black, radius: 10)
