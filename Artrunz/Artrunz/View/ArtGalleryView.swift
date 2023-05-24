@@ -53,58 +53,70 @@ struct ArtGalleryView: View {
                     .bold()
                     .frame(maxWidth: .infinity,maxHeight: 40)
                     .background(Color("denim"))
-                    
-                    List(savings, id: \.self) { save in
-                        VStack (alignment: .center) {
-                            HStack {
-                                Text("\(save.name ?? "")")
-                                Spacer()
-                            }
-                            .font(.system(size: 30))
-                            .bold()
-                            .shadow(color: .black, radius: 5)
-                            .padding([.leading,.trailing],10)
-                            
-                            Image(uiImage: UIImage(data: save.id ?? self.image)!)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 333, height: 500)
-                                .cornerRadius(20)
+                    Spacer()
+                    if savings.isEmpty {
+                        VStack {
+                            Spacer()
+                            Text("Add your masterpiece!")
+                                .font(.system(size: 25))
+                                .bold()
+                            Text("Click the + icon at the right top")
+                            Spacer()
+                        }
+                    } else {
+                        List(savings, id: \.self) { save in
+                            VStack (alignment: .center) {
+                                HStack {
+                                    Text("\(save.name ?? "")")
+                                    Spacer()
+                                }
+                                .font(.system(size: 30))
+                                .bold()
                                 .shadow(color: .black, radius: 5)
-                                .padding(.bottom)
-                            
-                            HStack {
-                                VStack (alignment: .leading) {
-                                    Text("Distance (m)")
-                                        .font(.system(size: 20))
-                                    Text("\(save.dist ?? "")")
-                                        .font(.system(size: 30))
-                                        .bold()
-                                }
+                                .padding([.leading,.trailing],10)
                                 
-                                Spacer()
-                                VStack(alignment: .trailing){
-                                    Text("Total Time")
-                                        .font(.system(size: 20))
-                                    Text("\(save.time ?? "")")
-                                        .font(.system(size: 30))
-                                        .bold()
-                                }
+                                Image(uiImage: UIImage(data: save.id ?? self.image)!)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 333, height: 500)
+                                    .cornerRadius(20)
+                                    .shadow(color: .black, radius: 5)
+                                    .padding(.bottom)
                                 
+                                HStack {
+                                    VStack (alignment: .leading) {
+                                        Text("Distance (m)")
+                                            .font(.system(size: 20))
+                                        Text("\(save.dist ?? "")")
+                                            .font(.system(size: 30))
+                                            .bold()
+                                    }
+                                    
+                                    Spacer()
+                                    VStack(alignment: .trailing){
+                                        Text("Total Time")
+                                            .font(.system(size: 20))
+                                        Text("\(save.time ?? "")")
+                                            .font(.system(size: 30))
+                                            .bold()
+                                    }
+                                    
+                                }
+                                .foregroundColor(.white)
+                                .shadow(color: .black, radius: 5)
+                                .padding([.leading,.trailing],10)
+                                
+                                Divider()
+                                    .overlay(.white.opacity(0.5))
                             }
                             .foregroundColor(.white)
-                            .shadow(color: .black, radius: 5)
-                            .padding([.leading,.trailing],10)
-                            
-                            Divider()
-                                .overlay(.white.opacity(0.5))
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
                         }
-                        .foregroundColor(.white)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+                        .listStyle(PlainListStyle())
+                        .background(Color.clear)
                     }
-                    .listStyle(PlainListStyle())
-                    .background(Color.clear)
+                    
                 }
             }
         }
@@ -155,12 +167,18 @@ struct AddArtView: View {
                         }, label: {
                             Text("Cancel")
                                 .foregroundColor(Color("yellow"))
-                            //                                .frame(width: 100, height: 100)
                         })
                         
                         Spacer()
                     }
+                    
+                    
                 }
+                .padding()
+                .font(.system(size: 20))
+                .bold()
+                .frame(maxWidth: .infinity,maxHeight: 40)
+                .background(Color("denim"))
                 
                 ScrollView(showsIndicators: false) {
                     VStack (spacing: 25) {
@@ -252,6 +270,7 @@ struct AddArtView: View {
                         save.time = self.time
                         save.id = self.image
                         self.presentationMode.wrappedValue.dismiss()
+                        try? moc.save()
                     }, label: {
                         
                             Text("Save")
