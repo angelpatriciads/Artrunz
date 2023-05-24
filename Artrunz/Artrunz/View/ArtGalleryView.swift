@@ -9,13 +9,8 @@ import SwiftUI
 
 struct ArtGalleryView: View {
     @Environment(\.managedObjectContext) var moc
-    @FetchRequest(entity: Saving.entity(), sortDescriptors: [
-        NSSortDescriptor(keyPath: \Saving.id, ascending: true),
-        NSSortDescriptor(keyPath: \Saving.name, ascending: true),
-        NSSortDescriptor(keyPath: \Saving.time, ascending: false),
-        NSSortDescriptor(keyPath: \Saving.dist, ascending: false)
-        
-    ]) var savings : FetchedResults<Saving>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.name)])
+    private var savings : FetchedResults<Saving>
     
     @State var image : Data = .init(count: 0)
     
@@ -31,6 +26,34 @@ struct ArtGalleryView: View {
                     .edgesIgnoringSafeArea(.all)
                 
                 VStack {
+                    HStack {
+                        Button(action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }, label: {
+                            Image(systemName: "house.fill")
+                        })
+                        
+                        Spacer()
+                        
+                        Text("Art Gallery")
+                            
+                        Spacer()
+                        
+                        Button(action: {
+                            self.show.toggle()
+                        }, label: {
+                            NavigationLink(destination: AddArtView().environment(\.managedObjectContext, self.moc)){
+                                Image(systemName: "plus")
+                            }
+                        })
+                        
+                    }
+                    .padding()
+                    .font(.system(size: 20))
+                    .bold()
+                    .frame(maxWidth: .infinity,maxHeight: 40)
+                    .background(Color("denim"))
+                    
                     List(savings, id: \.self) { save in
                         VStack (alignment: .center) {
                             HStack {
@@ -45,7 +68,7 @@ struct ArtGalleryView: View {
                             Image(uiImage: UIImage(data: save.id ?? self.image)!)
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 333, height: 505)
+                                .frame(width: 333, height: 500)
                                 .cornerRadius(20)
                                 .shadow(color: .black, radius: 5)
                                 .padding(.bottom)
@@ -72,9 +95,13 @@ struct ArtGalleryView: View {
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 5)
                             .padding([.leading,.trailing],10)
+                            
+                            Divider()
+                                .overlay(.white.opacity(0.5))
                         }
                         .foregroundColor(.white)
                         .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
                     }
                     .listStyle(PlainListStyle())
                     .background(Color.clear)
@@ -82,30 +109,6 @@ struct ArtGalleryView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .navigationTitle("Art Gallery")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }, label: {
-                    Image(systemName: "house.fill")
-                })
-            }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                
-                Button(action: {
-                    self.show.toggle()
-                }, label: {
-                    NavigationLink(destination: AddArtView().environment(\.managedObjectContext, self.moc)){
-                        Image(systemName: "plus")
-                    }
-                })
-                
-            }
-        }
-        
     }
 }
 
@@ -164,7 +167,7 @@ struct AddArtView: View {
                                 Image(uiImage: UIImage(data: self.image)!)
                                     .resizable()
                                     .scaledToFill()
-                                    .frame(width: 333, height: 505)
+                                    .frame(width: 333, height: 500)
                                     .cornerRadius(20)
                                     .shadow(color: .black, radius: 5)
                             }
@@ -174,7 +177,7 @@ struct AddArtView: View {
                             }) {
                                 Image(systemName: "photo.fill")
                                     .font(.system(size: 250))
-                                    .frame(width: 333, height: 505)
+                                    .frame(width: 333, height: 500)
                                     .shadow(color: .black, radius: 10)
                             }
                         }
@@ -236,6 +239,7 @@ struct AddArtView: View {
                             
                         }
                     }
+                    .padding()
                     
                     Button(action: {
                         let save = Saving(context: self.moc)
