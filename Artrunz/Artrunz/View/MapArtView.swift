@@ -67,7 +67,7 @@ struct MapArtView: View {
         ZStack {
             
             // MARK: Map
-            MapView(locationManager: locationManager, showsUserLocation: showsUserLocation, annotations: createAnnotations(), userTrackingMode: .followWithHeading)
+            MapView(locationManager: locationManager, showsUserLocation: showsUserLocation, annotations: createAnnotations(), userTrackingMode: .follow)
                 .accentColor(Color("blue"))
                 .edgesIgnoringSafeArea(.all)
             
@@ -143,10 +143,6 @@ struct MapArtView: View {
                     
                     HStack {
                         Button(action: {
-                            coordinatesList.removeAll()
-                            print(coordinatesList)
-                            stopTimer()
-                            showsUserLocation = false
                             finishButtonTapped()
                         }) {
                             Text("Finish")
@@ -310,7 +306,16 @@ struct MapArtView: View {
     }
     
     private func finishButtonTapped() {
+        
+        stopTimer()
+        showsUserLocation = false
         isFinished = true
+        print(coordinatesList)
+        let polyline = MKPolyline(coordinates: coordinatesList, count: coordinatesList.count)
+        let edgePadding = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
+        locationManager.mapView.setVisibleMapRect(polyline.boundingMapRect, edgePadding: edgePadding, animated: true)
+        coordinatesList.removeAll()
+        print(coordinatesList)
     }
 }
 
@@ -348,6 +353,12 @@ struct MapView: UIViewRepresentable {
         uiView.showsUserLocation = showsUserLocation
         uiView.removeAnnotations(uiView.annotations)
         uiView.addAnnotations(annotations)
+        
+//        if isFinished {
+//                let polyline = MKPolyline(coordinates: coordinatesList, count: coordinatesList.count)
+//                let edgePadding = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
+//                uiView.setVisibleMapRect(polyline.boundingMapRect, edgePadding: edgePadding, animated: true)
+//            }
     }
     
     typealias UIViewType = MKMapView
