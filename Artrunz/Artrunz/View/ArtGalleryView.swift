@@ -127,7 +127,6 @@ struct ArtGalleryView: View {
 struct ArtGalleryView_Previews: PreviewProvider {
     static var previews: some View {
         ArtGalleryView()
-        //        AddArtView()
     }
 }
 

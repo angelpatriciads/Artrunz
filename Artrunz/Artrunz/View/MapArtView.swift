@@ -63,6 +63,10 @@ struct MapArtView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
+    @State private var mapSnapshot: UIImage?
+    
+    @State private var isSnapshotTaken = false
+    
     var body: some View {
         ZStack {
             
@@ -263,6 +267,7 @@ struct MapArtView: View {
         let coordinates = coordinatesList.map { $0 }
         let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
         locationManager.mapView.addOverlay(polyline)
+        print(polyline)
     }
     
     private func createAnnotations() -> [MKAnnotation] {
@@ -314,9 +319,83 @@ struct MapArtView: View {
         let polyline = MKPolyline(coordinates: coordinatesList, count: coordinatesList.count)
         let edgePadding = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
         locationManager.mapView.setVisibleMapRect(polyline.boundingMapRect, edgePadding: edgePadding, animated: true)
+//        takeMapSnapshot()
         coordinatesList.removeAll()
-        print(coordinatesList)
     }
+    
+//    func takeMapSnapshot() {
+//        guard !isSnapshotTaken else {
+//            return
+//        }
+//
+//        let options = MKMapSnapshotter.Options()
+//        options.region = locationManager.mapView.region
+//        options.scale = UIScreen.main.scale
+//        options.size = locationManager.mapView.frame.size
+//
+//        let snapshotter = MKMapSnapshotter(options: options)
+//        snapshotter.start { snapshot, error in
+//            if let snapshot = snapshot {
+//                let image = snapshot.image
+//                DispatchQueue.main.async {
+//                    self.mapSnapshot = image
+//                    self.isSnapshotTaken = true
+//                }
+//            } else if let error = error {
+//                print("Error taking map snapshot: \(error.localizedDescription)")
+//            }
+//        }
+//    }
+    
+//    private func generateImageFromMap() {
+//        guard let region = mapRegion() else { return }
+//
+//        let options = MKMapSnapshotter.Options()
+//        options.region = region
+//        options.size = CGSize(width: 200, height: 200)
+//        options.showsBuildings = false
+//        options.showsPointsOfInterest = false
+//
+//        MKMapSnapshotter(options: options).start() { snapshot, error in
+//            guard let snapshot = snapshot else { return }
+//
+//            let mapImage = snapshot.image
+//
+//            let finalImage = UIGraphicsImageRenderer(size: mapImage.size).image { _ in
+//
+//                // draw the map image
+//
+//                mapImage.draw(at: .zero)
+//
+//                // only bother with the following if we have a path with two or more coordinates
+//
+//                guard let coordinates = self.coordinates, coordinates.count > 1 else { return }
+//
+//                // convert the `[CLLocationCoordinate2D]` into a `[CGPoint]`
+//
+//                let points = coordinates.map { coordinate in
+//                    snapshot.point(for: coordinate)
+//                }
+//
+//                // build a bezier path using that `[CGPoint]`
+//
+//                let path = UIBezierPath()
+//                path.move(to: points[0])
+//
+//                for point in points.dropFirst() {
+//                    path.addLine(to: point)
+//                }
+//
+//                // stroke it
+//
+//                path.lineWidth = 1
+//                UIColor.blue.setStroke()
+//                path.stroke()
+//            }
+//
+//            // do something with finalImage
+//        }
+//    }
 }
 
 struct MapArtView_Previews: PreviewProvider {
@@ -344,8 +423,7 @@ struct MapView: UIViewRepresentable {
         locationManager.mapView.overrideUserInterfaceStyle = .dark
         locationManager.mapView.mapType = .mutedStandard
         locationManager.mapView.showsUserLocation = showsUserLocation
-        locationManager.mapView.userTrackingMode = userTrackingMode
-        
+        locationManager.mapView.setUserTrackingMode(userTrackingMode, animated: true)
         return locationManager.mapView
     }
     
@@ -353,12 +431,6 @@ struct MapView: UIViewRepresentable {
         uiView.showsUserLocation = showsUserLocation
         uiView.removeAnnotations(uiView.annotations)
         uiView.addAnnotations(annotations)
-        
-//        if isFinished {
-//                let polyline = MKPolyline(coordinates: coordinatesList, count: coordinatesList.count)
-//                let edgePadding = UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
-//                uiView.setVisibleMapRect(polyline.boundingMapRect, edgePadding: edgePadding, animated: true)
-//            }
     }
     
     typealias UIViewType = MKMapView
@@ -366,6 +438,8 @@ struct MapView: UIViewRepresentable {
     func makeCoordinator() -> MapCoordinator {
         return MapCoordinator(parent: locationManager.mapView)
     }
+    
+    
     
 }
 
@@ -447,6 +521,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         locationStatus = status
+//        mapView.setUserTrackingMode(.none, animated: true)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
